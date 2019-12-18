@@ -1,4 +1,6 @@
+.idea/
 .vscode
+models/
 experiments/
 data/
 dataset_cache*

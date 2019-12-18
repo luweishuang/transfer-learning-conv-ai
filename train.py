@@ -1,5 +1,3 @@
-# Copyright (c) 2019-present, HuggingFace Inc.
-# All rights reserved. This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree.
 import os
 import math
 import logging
@@ -29,6 +27,7 @@ PADDED_INPUTS = ["input_ids", "lm_labels", "token_type_ids"]
 
 logger = logging.getLogger(__file__)
 
+
 def average_distributed_scalar(scalar, args):
     """ Average a scalar over the nodes if we are in distributed training. We use this for distributed evaluation. """
     if args.local_rank == -1:
@@ -52,6 +51,7 @@ def add_special_tokens_(model, tokenizer):
     num_added_tokens = tokenizer.add_special_tokens(ATTR_TO_SPECIAL_TOKEN) # doesn't add if they are already there
     if num_added_tokens > 0:
         model.resize_token_embeddings(new_num_tokens=orig_num_tokens + num_added_tokens)
+
 
 def build_input_from_segments(persona, history, reply, tokenizer, lm_labels=False, with_eos=True):
     """ Build a sequence of input from 3 segments: persona, history and last reply. """
@@ -151,7 +151,6 @@ def train():
     logger.info("Prepare tokenizer, pretrained model and optimizer.")
     tokenizer_class = GPT2Tokenizer if "gpt2" in args.model_checkpoint else OpenAIGPTTokenizer # cant use Autotokenizer because checkpoint could be a Path
     tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
-
 
     model_class = GPT2DoubleHeadsModel if "gpt2" in args.model_checkpoint else OpenAIGPTDoubleHeadsModel
     model = model_class.from_pretrained(args.model_checkpoint)
@@ -262,6 +261,7 @@ def train():
     if args.local_rank in [-1, 0] and args.n_epochs > 0:
         os.rename(checkpoint_handler._saved[-1][1][-1], os.path.join(log_dir, WEIGHTS_NAME))  # TODO: PR in ignite to have better access to saved file paths (cleaner)
         tb_logger.close()
+
 
 if __name__ == "__main__":
     train()
